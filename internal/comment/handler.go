@@ -36,7 +36,7 @@ func Add(c *fiber.Ctx) error {
 }
 
 func Get(c *fiber.Ctx) error {
-	q := new(CommentQuery)
+	q := new(CommentQueryByPage)
 	if err := c.BodyParser(q); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid query"})
 	}
@@ -56,4 +56,31 @@ func Get(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(res)
+}
+
+func Del(c *fiber.Ctx) error {
+	q := new(CommentQueryByID)
+	if err := c.BodyParser(q); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid query"})
+	}
+
+	if err := validate.Struct(q); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "validation failed",
+			"msg":   err.Error(),
+		})
+	}
+
+	affected, err := DeleteDB(q)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "failed to delete comments",
+			"msg":   err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success":  "deleted comment(s)",
+		"affected": affected,
+	})
 }

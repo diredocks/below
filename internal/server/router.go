@@ -11,4 +11,5 @@ func CommentApiRouter(app fiber.Router) {
 	router_group.Get("/", comment.Index)
 	router_group.Get("/comment", comment.Get)
 	router_group.Post("/comment", comment.Add)
+	router_group.Delete("/comment", comment.Del)
 }

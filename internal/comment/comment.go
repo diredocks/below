@@ -18,7 +18,11 @@ type Comment struct {
 	Status    CommentStatus `xorm:"not null default 'Sent'"`
 }
 
-type CommentQuery struct {
+type CommentQueryByPage struct {
 	Site string `validate:"required,url" json:"site"`
 	Page string `validate:"required,uri" json:"page"`
+}
+
+type CommentQueryByID struct {
+	IDs []string `validate:"gt=0,dive,number,required" json:"id"`
 }

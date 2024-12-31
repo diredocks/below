@@ -6,18 +6,14 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"xorm.io/xorm"
 
 	"below/internal/comment"
 	"below/internal/database"
 )
 
 func New(ctx context.Context) (*fiber.App, error) {
-	var err error
 	// Initialize database
-	if database.Engine, err = xorm.NewEngine("sqlite3", "./below.db"); err != nil {
-		return nil, err
-	}
+	database.InitDB()
 	comment.InitDB()
 
 	// Config middleware and misc
