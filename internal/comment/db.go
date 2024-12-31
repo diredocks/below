@@ -21,15 +21,15 @@ func InitDB() error {
 	return nil
 }
 
-func CommentInsertDB(com *Comment) error {
+func InsertDB(com *Comment) error {
 	com.Status = StatusSent
 	_, err := Engine.Insert(com)
 	return err
 }
 
-func CommentQueryDB(site, page string) ([]Comment, error) {
+func QueryDB(q *CommentQuery) ([]Comment, error) {
 	var comments []Comment
-	err := Engine.Where("site = ? AND page = ?", site, page).Find(&comments)
+	err := Engine.Where("site = ? AND page = ?", q.Site, q.Page).Find(&comments)
 	if err != nil {
 		return nil, err
 	}
