@@ -24,5 +24,5 @@ type CommentQueryByPage struct {
 }
 
 type CommentQueryByID struct {
-	IDs []string `validate:"gt=0,dive,number,required" json:"id"`
+	IDs []string `validate:"gt=0,dive,number,required" json:"ids"`
 }

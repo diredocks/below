@@ -13,8 +13,12 @@ import (
 
 func New(ctx context.Context) (*fiber.App, error) {
 	// Initialize database
-	database.InitDB()
-	comment.InitDB()
+	if err := database.InitDB(); err != nil {
+		return nil, err
+	} // This initialize db engine
+	if err := comment.InitDB(); err != nil {
+		return nil, err
+	}
 
 	// Config middleware and misc
 	app := fiber.New(fiber.Config{

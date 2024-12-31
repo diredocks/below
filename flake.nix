@@ -36,6 +36,7 @@
             gopls
 
             sqlite
+            upx
           ];
           shellHook = ''
             export SHELL=$(which zsh)

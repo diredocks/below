@@ -9,7 +9,7 @@ import (
 func CommentApiRouter(app fiber.Router) {
 	router_group := app.Group("/api")
 	router_group.Get("/", comment.Index)
-	router_group.Get("/comment", comment.Get)
-	router_group.Post("/comment", comment.Add)
-	router_group.Delete("/comment", comment.Del)
+	router_group.Post("/comment/get", comment.Get)
+	router_group.Post("/comment/add", comment.Add)
+	router_group.Post("/comment/delete", comment.Del)
 }

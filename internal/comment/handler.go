@@ -8,7 +8,7 @@ import (
 var validate = validator.New(validator.WithRequiredStructEnabled())
 
 func Index(c *fiber.Ctx) error {
-	return c.SendString("Hello, Below!")
+	return c.Status(fiber.StatusTeapot).SendString("I'm not a Tea pot!")
 }
 
 func Add(c *fiber.Ctx) error {
