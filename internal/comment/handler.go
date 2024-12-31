@@ -1,20 +1,18 @@
-package server
+package comment
 
 import (
-	"below/internal/comment"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
 var validate = validator.New(validator.WithRequiredStructEnabled())
 
-func CommentIndexHandler(c *fiber.Ctx) error {
+func IndexHandler(c *fiber.Ctx) error {
 	return c.SendString("Hello, Below!")
 }
 
-func CommentAddHandler(c *fiber.Ctx) error {
-	com := new(comment.Comment)
+func AddHandler(c *fiber.Ctx) error {
+	com := new(Comment)
 	if err := c.BodyParser(com); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid input"})
 	}
@@ -26,7 +24,7 @@ func CommentAddHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := comment.CommentInsertDB(com); err != nil {
+	if err := InsertDB(com); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "failed to save comment",
 		})
@@ -37,8 +35,8 @@ func CommentAddHandler(c *fiber.Ctx) error {
 	})
 }
 
-func CommentGetHandler(c *fiber.Ctx) error {
-	q := new(comment.CommentQuery)
+func GetHandler(c *fiber.Ctx) error {
+	q := new(CommentQuery)
 	if err := c.BodyParser(q); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid query"})
 	}
@@ -50,7 +48,7 @@ func CommentGetHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	comments, err := comment.CommentQueryDB(q.Site, q.Page)
+	comments, err := QueryDB(q)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "failed to fetch comments",
