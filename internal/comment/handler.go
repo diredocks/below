@@ -7,11 +7,11 @@ import (
 
 var validate = validator.New(validator.WithRequiredStructEnabled())
 
-func IndexHandler(c *fiber.Ctx) error {
+func Index(c *fiber.Ctx) error {
 	return c.SendString("Hello, Below!")
 }
 
-func AddHandler(c *fiber.Ctx) error {
+func Add(c *fiber.Ctx) error {
 	com := new(Comment)
 	if err := c.BodyParser(com); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid input"})
@@ -35,7 +35,7 @@ func AddHandler(c *fiber.Ctx) error {
 	})
 }
 
-func GetHandler(c *fiber.Ctx) error {
+func Get(c *fiber.Ctx) error {
 	q := new(CommentQuery)
 	if err := c.BodyParser(q); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid query"})
@@ -48,18 +48,12 @@ func GetHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	comments, err := QueryDB(q)
+	res, err := QueryDB(q)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "failed to fetch comments",
 		})
 	}
 
-	if len(comments) == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "found nothing",
-		})
-	}
-
-	return c.JSON(comments)
+	return c.JSON(res)
 }

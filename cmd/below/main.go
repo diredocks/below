@@ -2,17 +2,19 @@ package main
 
 import (
 	"context"
-	"fmt"
 
-	"below/internal/comment"
 	"below/internal/server"
+
+	"github.com/gofiber/fiber/v2/log"
 )
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	fmt.Println("Hello, Below!")
-	comment.InitDB()
-	app := server.NewServer(ctx)
-	app.Listen(":3000")
+
+	if app, err := server.New(ctx); err != nil {
+		log.Fatal(err.Error())
+	} else {
+		log.Fatal(app.Listen(":3000"))
+	}
 }
