@@ -30,6 +30,7 @@ func New(ctx context.Context) (*fiber.App, error) {
 	}))
 
 	// Config route
-	CommentApiRouter(app)
+	api_router := app.Group("/api")
+	comment.Router(api_router)
 	return app, nil
 }

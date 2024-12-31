@@ -27,8 +27,16 @@ func QueryDB(q *CommentQueryByPage) ([]Comment, error) {
 	return res, nil
 }
 
-func DeleteDB(q *CommentQueryByID) (int64, error) {
+func DeleteByIdDB(q *CommentQueryByID) (int64, error) {
 	affected, err := database.Engine.In("id", q.IDs).Delete(&Comment{})
+	if err != nil {
+		return 0, err
+	}
+	return affected, nil
+}
+
+func DeleteByPageDB(q *CommentQueryByPage) (int64, error) {
+	affected, err := database.Engine.Where("site = ? AND page = ? AND status = 'Sent'", q.Site, q.Page).Delete(&Comment{})
 	if err != nil {
 		return 0, err
 	}

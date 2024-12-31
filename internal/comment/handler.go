@@ -58,7 +58,7 @@ func Get(c *fiber.Ctx) error {
 	return c.JSON(res)
 }
 
-func Del(c *fiber.Ctx) error {
+func DelById(c *fiber.Ctx) error {
 	q := new(CommentQueryByID)
 	if err := c.BodyParser(q); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid query"})
@@ -71,7 +71,34 @@ func Del(c *fiber.Ctx) error {
 		})
 	}
 
-	affected, err := DeleteDB(q)
+	affected, err := DeleteByIdDB(q)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "failed to delete comments",
+			"msg":   err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success":  "deleted comment(s)",
+		"affected": affected,
+	})
+}
+
+func DelByPage(c *fiber.Ctx) error {
+	q := new(CommentQueryByPage)
+	if err := c.BodyParser(q); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid query"})
+	}
+
+	if err := validate.Struct(q); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "validation failed",
+			"msg":   err.Error(),
+		})
+	}
+
+	affected, err := DeleteByPageDB(q)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "failed to delete comments",
