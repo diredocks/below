@@ -5,40 +5,27 @@ import (
 )
 
 func InitDB() error {
-	// Sync database with struct Comment
-	if err := database.Engine.Sync2(new(Comment)); err != nil {
-		return err
-	}
-	return nil
+	// AutoMigrate syncs the schema with the database
+	return database.DB.AutoMigrate(&Comment{})
 }
 
 func InsertDB(c *Comment) error {
 	c.Status = StatusSent // Default to StatusSent
-	_, err := database.Engine.Insert(c)
-	return err
+	return database.DB.Create(c).Error
 }
 
 func QueryDB(q *CommentQueryByPage) ([]Comment, error) {
-	res := []Comment{}
-	err := database.Engine.Where("site = ? AND page = ? AND status = 'Sent'", q.Site, q.Page).Find(&res)
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
+	var res []Comment
+	err := database.DB.Where("site = ? AND page = ? AND status = ?", q.Site, q.Page, StatusSent).Find(&res).Error
+	return res, err
 }
 
 func DeleteByIdDB(q *CommentQueryByID) (int64, error) {
-	affected, err := database.Engine.In("id", q.IDs).Delete(&Comment{})
-	if err != nil {
-		return 0, err
-	}
-	return affected, nil
+	result := database.DB.Delete(&Comment{}, q.IDs)
+	return result.RowsAffected, result.Error
 }
 
 func DeleteByPageDB(q *CommentQueryByPage) (int64, error) {
-	affected, err := database.Engine.Where("site = ? AND page = ? AND status = 'Sent'", q.Site, q.Page).Delete(&Comment{})
-	if err != nil {
-		return 0, err
-	}
-	return affected, nil
+	result := database.DB.Where("site = ? AND page = ? AND status = ?", q.Site, q.Page, StatusSent).Delete(&Comment{})
+	return result.RowsAffected, result.Error
 }

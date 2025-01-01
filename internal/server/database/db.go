@@ -1,16 +1,17 @@
 package database
 
 import (
-	_ "github.com/mattn/go-sqlite3"
-	"xorm.io/xorm"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
-var Engine *xorm.Engine
+var DB *gorm.DB
 
-// TODO: make database path configurable
 func InitDB() error {
 	var err error
-	if Engine, err = xorm.NewEngine("sqlite3", "./below.db"); err != nil {
+	// TODO: configurable db path
+	DB, err = gorm.Open(sqlite.Open("./below.db"), &gorm.Config{})
+	if err != nil {
 		return err
 	}
 	return nil
