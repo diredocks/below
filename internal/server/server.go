@@ -7,17 +7,22 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 
+	"below/internal/auth"
 	"below/internal/comment"
 	"below/internal/database"
 )
 
 func New(ctx context.Context) (*fiber.App, error) {
 	// Initialize database
-	if err := database.InitDB(); err != nil {
-		return nil, err
-	} // This initialize db engine
-	if err := comment.InitDB(); err != nil {
-		return nil, err
+	dbInit := []func() error{
+		database.InitDB, // This initialize db engine
+		comment.InitDB,
+		auth.InitDB,
+	}
+	for _, init := range dbInit {
+		if err := init(); err != nil {
+			return nil, err
+		}
 	}
 
 	// Config middleware and misc
@@ -32,5 +37,6 @@ func New(ctx context.Context) (*fiber.App, error) {
 	// Config route
 	api_router := app.Group("/api")
 	comment.Router(api_router)
+	auth.Router(api_router)
 	return app, nil
 }
