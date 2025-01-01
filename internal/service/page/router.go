@@ -10,7 +10,7 @@ import (
 func Router(app fiber.Router) {
 	group := app.Group("/page")
 	group.Post("/", Index)
-	group.Post("/new", middleware.Validator(&service.Page{}), Add)
+	group.Post("/add", middleware.Validator(&service.Page{}), Add)
 	group.Post("/get", middleware.Validator(&service.Page{}), Get)
 	group.Post("/del", middleware.Validator(&service.Page{}), Del)
 }
