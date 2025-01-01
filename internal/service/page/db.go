@@ -31,16 +31,26 @@ func GetAllDB(p *service.Page) ([]service.Page, error) {
 	return pages, err
 }
 
+func DelByIdDB(id uint) error {
+	err := database.DB.Unscoped().
+		Select(clause.Associations).Delete(&service.Page{
+		Model: gorm.Model{
+			ID: id,
+		},
+	}).Error
+	return err
+}
+
 func DelDB(p *service.Page) error {
 	query, err := QueryDB(p)
 	if err != nil {
 		return err
 	}
-	res := database.DB.Unscoped().
+	err = database.DB.Unscoped().
 		Select(clause.Associations).Delete(&service.Page{
 		Model: gorm.Model{
 			ID: query.ID,
 		},
-	})
-	return res.Error
+	}).Error
+	return err
 }

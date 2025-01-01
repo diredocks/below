@@ -67,3 +67,27 @@ func Del(c *fiber.Ctx) error {
 		"success": "deleted page",
 	})
 }
+
+func Update(c *fiber.Ctx) error {
+	sitemapURL := "https://diredocks.github.io/blog/sitemap.xml"
+	data, err := FetchSitemap(sitemapURL)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "failed to update sitemap",
+			"msg":   err.Error(),
+		})
+	}
+	pages, err := ParseSitemap(data)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "failed to update sitemap",
+			"msg":   err.Error(),
+		})
+	}
+	for _, p := range pages {
+		InsertDB(&p)
+	}
+	return c.JSON(fiber.Map{
+		"success": "updated sitemap",
+	})
+}

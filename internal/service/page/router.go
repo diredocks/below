@@ -13,4 +13,5 @@ func Router(app fiber.Router) {
 	group.Post("/add", middleware.Validator(&service.Page{}), Add)
 	group.Post("/get", middleware.Validator(&service.Page{}), Get)
 	group.Post("/del", middleware.Validator(&service.Page{}), Del)
+	group.Post("/update", Update)
 }
