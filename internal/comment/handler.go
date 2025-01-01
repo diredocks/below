@@ -7,22 +7,35 @@ import (
 
 var validate = validator.New(validator.WithRequiredStructEnabled())
 
+func Validator[T any](model *T) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		instance := new(T)
+		// Parse the request body into the model
+		if err := c.BodyParser(instance); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "Invalid request body",
+			})
+		}
+
+		// Validate the model
+		if err := validate.Struct(instance); err != nil {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		// Pass the validated model to the next handler via context
+		c.Locals("validatedBody", instance)
+		return c.Next()
+	}
+}
+
 func Index(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusTeapot).SendString("I'm not a Tea pot!")
 }
 
 func Add(c *fiber.Ctx) error {
-	com := new(Comment)
-	if err := c.BodyParser(com); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid input"})
-	}
-
-	if err := validate.Struct(com); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "validation failed",
-			"msg":   err.Error(),
-		})
-	}
+	com := c.Locals("validatedBody").(*Comment)
 
 	if err := InsertDB(com); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -36,18 +49,7 @@ func Add(c *fiber.Ctx) error {
 }
 
 func Get(c *fiber.Ctx) error {
-	q := new(CommentQueryByPage)
-	if err := c.BodyParser(q); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid query"})
-	}
-
-	if err := validate.Struct(q); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "validation failed",
-			"msg":   err.Error(),
-		})
-	}
-
+	q := c.Locals("validatedBody").(*CommentQueryByPage)
 	res, err := QueryDB(q)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -59,18 +61,7 @@ func Get(c *fiber.Ctx) error {
 }
 
 func DelById(c *fiber.Ctx) error {
-	q := new(CommentQueryByID)
-	if err := c.BodyParser(q); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid query"})
-	}
-
-	if err := validate.Struct(q); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "validation failed",
-			"msg":   err.Error(),
-		})
-	}
-
+	q := c.Locals("validatedBody").(*CommentQueryByID)
 	affected, err := DeleteByIdDB(q)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -86,17 +77,7 @@ func DelById(c *fiber.Ctx) error {
 }
 
 func DelByPage(c *fiber.Ctx) error {
-	q := new(CommentQueryByPage)
-	if err := c.BodyParser(q); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid query"})
-	}
-
-	if err := validate.Struct(q); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "validation failed",
-			"msg":   err.Error(),
-		})
-	}
+	q := c.Locals("validatedBody").(*CommentQueryByPage)
 
 	affected, err := DeleteByPageDB(q)
 	if err != nil {
