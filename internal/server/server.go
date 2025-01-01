@@ -9,7 +9,7 @@ import (
 
 	"below/internal/auth"
 	"below/internal/comment"
-	"below/internal/database"
+	"below/internal/server/database"
 )
 
 func New(ctx context.Context) (*fiber.App, error) {

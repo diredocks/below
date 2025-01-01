@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"below/internal/database"
+	"below/internal/server/database"
 )
 
 func InitDB() error {
