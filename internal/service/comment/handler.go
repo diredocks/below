@@ -24,3 +24,20 @@ func Add(c *fiber.Ctx) error {
 		"success": "comment sent",
 	})
 }
+
+func Del(c *fiber.Ctx) error {
+	q := c.Locals("validatedBody").(*service.QueryByIDs)
+	affected, err := DelDB(q)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "failed to delete comments",
+			"msg":   err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success":  "deleted comment(s)",
+		"affected": affected,
+	})
+}

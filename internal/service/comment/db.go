@@ -16,3 +16,8 @@ func InsertDB(c *service.Comment) error {
 	c.Status = service.StatusSent // Default to StatusSent
 	return database.DB.Create(&c).Error
 }
+
+func DelDB(q *service.QueryByIDs) (int64, error) {
+	res := database.DB.Delete(&service.Comment{}, q.IDs)
+	return res.RowsAffected, res.Error
+}
