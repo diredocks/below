@@ -6,7 +6,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// Get all Pages from Database
 func Index(c *fiber.Ctx) error {
 	res, err := GetAllDB(&service.Page{})
 
@@ -20,7 +19,6 @@ func Index(c *fiber.Ctx) error {
 	return c.JSON(res)
 }
 
-// Add a Page to Database
 func Add(c *fiber.Ctx) error {
 	p := c.Locals("validatedBody").(*service.Page)
 
@@ -37,7 +35,6 @@ func Add(c *fiber.Ctx) error {
 	})
 }
 
-// Get a Page from Database
 func Get(c *fiber.Ctx) error {
 	p := c.Locals("validatedBody").(*service.Page)
 	res, err := QueryDB(p)
@@ -54,9 +51,8 @@ func Get(c *fiber.Ctx) error {
 
 func Del(c *fiber.Ctx) error {
 	p := c.Locals("validatedBody").(*service.Page)
-	err := DelDB(p)
 
-	if err != nil {
+	if err := DelDB(p); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "failed to delete page",
 			"msg":   err.Error(),
@@ -69,25 +65,30 @@ func Del(c *fiber.Ctx) error {
 }
 
 func Update(c *fiber.Ctx) error {
-	sitemapURL := "https://diredocks.github.io/blog/sitemap.xml"
+	sitemapURL := "https://diredocks.github.io/blog/sitemap.xml" // TODO: config
 	data, err := FetchSitemap(sitemapURL)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "failed to update sitemap",
+			"error": "failed to fetch sitemap",
 			"msg":   err.Error(),
 		})
 	}
 	pages, err := ParseSitemap(data)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "failed to update sitemap",
+			"error": "failed to parse sitemap",
 			"msg":   err.Error(),
 		})
 	}
-	for _, p := range pages {
-		InsertDB(&p)
+	affected, err := InsertsDB(pages)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "failed to insert sitemap into database",
+			"msg":   err.Error(),
+		})
 	}
 	return c.JSON(fiber.Map{
-		"success": "updated sitemap",
+		"success":  "updated sitemap",
+		"affected": affected,
 	})
 }
