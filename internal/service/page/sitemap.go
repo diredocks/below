@@ -24,19 +24,19 @@ func ParseSitemap(data []byte) ([]service.Page, error) {
 		return nil, fmt.Errorf("error parsing XML: %w", err)
 	}
 
-	var result []service.Page
+	var pages []service.Page
 	for _, urlEntry := range sitemap.URLs {
 		parsedURL, err := url.Parse(urlEntry.Loc)
 		if err != nil {
 			return nil, fmt.Errorf("error parsing URL: %w", err)
 		}
-		result = append(result, service.Page{
+		pages = append(pages, service.Page{
 			Site: parsedURL.Host,
 			Path: parsedURL.Path,
 		})
 	}
 
-	return result, nil
+	return pages, nil
 }
 
 func FetchSitemap(sitemapURL string) ([]byte, error) {

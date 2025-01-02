@@ -1,6 +1,8 @@
 package database
 
 import (
+	"below/internal/config"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -9,8 +11,7 @@ var DB *gorm.DB
 
 func InitDB() error {
 	var err error
-	// TODO: configurable db path
-	DB, err = gorm.Open(sqlite.Open("./below.db"), &gorm.Config{})
+	DB, err = gorm.Open(sqlite.Open(config.Config("DB_PATH")), &gorm.Config{})
 	if err != nil {
 		return err
 	}

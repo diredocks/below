@@ -1,6 +1,7 @@
 package page
 
 import (
+	"below/internal/config"
 	"below/internal/service"
 
 	"github.com/gofiber/fiber/v2"
@@ -65,8 +66,7 @@ func Del(c *fiber.Ctx) error {
 }
 
 func Update(c *fiber.Ctx) error {
-	sitemapURL := "https://diredocks.github.io/blog/sitemap.xml" // TODO: config
-	data, err := FetchSitemap(sitemapURL)
+	data, err := FetchSitemap(config.Config("SITEMAP_URL"))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "failed to fetch sitemap",
