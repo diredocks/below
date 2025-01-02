@@ -89,39 +89,3 @@ func AddOrUpdate(c *fiber.Ctx) error {
 		"affected": affected,
 	})
 }
-
-/*
-func Add(c *fiber.Ctx) error {
-	p := c.Locals("validatedBody").(*service.Page)
-
-	if err := InsertDB(p); err != nil {
-		return c.Status(fiber.StatusInternalServerError).
-			JSON(fiber.Map{
-				"error": "failed to add page",
-				"msg":   err.Error(),
-			})
-	}
-
-	return c.Status(fiber.StatusCreated).
-		JSON(fiber.Map{
-			"success": "page added",
-			"id":      p.ID,
-		})
-}
-
-func Del(c *fiber.Ctx) error {
-	p := c.Locals("validatedBody").(*service.Page)
-
-	if err := DelDB(p); err != nil {
-		return c.Status(fiber.StatusInternalServerError).
-			JSON(fiber.Map{
-				"error": "failed to delete page",
-				"msg":   err.Error(),
-			})
-	}
-
-	return c.JSON(fiber.Map{
-		"success": "deleted page",
-	})
-}
-*/
