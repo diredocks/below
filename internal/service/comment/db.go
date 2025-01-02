@@ -18,6 +18,6 @@ func InsertDB(c *service.Comment) error {
 }
 
 func DelDB(q *service.ReqIDs) (int64, error) {
-	res := database.DB.Delete(&service.Comment{}, q.IDs)
+	res := database.DB.Unscoped().Delete(&service.Comment{}, q.IDs)
 	return res.RowsAffected, res.Error
 }
