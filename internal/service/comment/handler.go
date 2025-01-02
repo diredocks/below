@@ -29,7 +29,7 @@ func Add(c *fiber.Ctx) error {
 }
 
 func Del(c *fiber.Ctx) error {
-	q := c.Locals("validatedBody").(*service.QueryByIDs)
+	q := c.Locals("validatedBody").(*service.ReqIDs)
 	affected, err := DelDB(q)
 
 	if err != nil {

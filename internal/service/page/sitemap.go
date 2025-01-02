@@ -17,26 +17,36 @@ type Sitemap struct {
 	} `xml:"url"`
 }
 
-func ParseSitemap(data []byte) ([]service.Page, error) {
+func ParseSitemap(data []byte) (*service.Site, []service.Page, error) {
 	var sitemap Sitemap
 	err := xml.Unmarshal(data, &sitemap)
 	if err != nil {
-		return nil, fmt.Errorf("error parsing XML: %w", err)
+		return nil, nil, fmt.Errorf("error parsing XML: %w", err)
 	}
+
+	if len(sitemap.URLs) == 0 {
+		return nil, nil, fmt.Errorf("sitemap contains no URLs")
+	}
+
+	// Extract the host from the first URL entry
+	parsedURL, err := url.Parse(sitemap.URLs[0].Loc)
+	if err != nil {
+		return nil, nil, fmt.Errorf("error parsing URL: %w", err)
+	}
+	site := &service.Site{Host: parsedURL.Host}
 
 	var pages []service.Page
 	for _, urlEntry := range sitemap.URLs {
 		parsedURL, err := url.Parse(urlEntry.Loc)
 		if err != nil {
-			return nil, fmt.Errorf("error parsing URL: %w", err)
+			return nil, nil, fmt.Errorf("error parsing URL: %w", err)
 		}
 		pages = append(pages, service.Page{
-			Site: parsedURL.Host,
 			Path: parsedURL.Path,
 		})
 	}
 
-	return pages, nil
+	return site, pages, nil
 }
 
 func FetchSitemap(sitemapURL string) ([]byte, error) {

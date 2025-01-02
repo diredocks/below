@@ -8,10 +8,10 @@ import (
 )
 
 func Router(app fiber.Router) {
-	group := app.Group("/page")
-	group.Post("/", Index)
-	group.Post("/add", middleware.Validator(&service.Page{}), Add)
-	group.Post("/get", middleware.Validator(&service.Page{}), Get)
-	group.Post("/del", middleware.Validator(&service.Page{}), Del)
-	group.Post("/update", Update)
+	page := app.Group("/page")
+	page.Post("/", Index)
+	page.Post("/del", middleware.Validator(&service.ReqPage{}), DelPage)
+	page.Post("/get", middleware.Validator(&service.ReqPage{}), GetPage)        // Get a page and all its comment by site and path
+	page.Post("/add", middleware.Validator(&service.ReqSiteMap{}), AddOrUpdate) // Update or Add a new site
+	page.Post("/update", middleware.Validator(&service.ReqSiteMap{}), AddOrUpdate)
 }

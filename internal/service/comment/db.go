@@ -17,7 +17,7 @@ func InsertDB(c *service.Comment) error {
 	return database.DB.Create(&c).Error
 }
 
-func DelDB(q *service.QueryByIDs) (int64, error) {
+func DelDB(q *service.ReqIDs) (int64, error) {
 	res := database.DB.Delete(&service.Comment{}, q.IDs)
 	return res.RowsAffected, res.Error
 }
