@@ -13,7 +13,9 @@ func InitDB() error {
 }
 
 func InsertPagesDB(s *service.Site, p []service.Page) (int64, error) {
-	res := database.DB.Clauses(clause.OnConflict{DoNothing: true}).Create(s)
+	res := database.DB.
+		Clauses(clause.OnConflict{DoNothing: true}).
+		Create(s)
 	if res.Error != nil {
 		return 0, res.Error
 	}
@@ -42,6 +44,14 @@ func InsertPagesDB(s *service.Site, p []service.Page) (int64, error) {
 	return res.RowsAffected, res.Error
 }
 
+func QuerySiteDB(q *service.ReqSite) (service.Site, error) {
+	var site service.Site
+	err := database.DB.
+		Where("host = ?", q.Site).
+		First(&site).Error
+	return site, err
+}
+
 func QueryPageDB(q *service.ReqPage) (*service.Page, error) {
 	var page service.Page
 	err := database.DB.
@@ -61,9 +71,22 @@ func DelPageDB(q *service.ReqPage) error {
 	if err != nil {
 		return err
 	}
-	return database.DB.Unscoped().
+	return database.DB.
+		Unscoped().
 		Select(clause.Associations).
 		Delete(page).Error
+}
+
+func DelSiteDB(q *service.ReqSite) error {
+	site, err := QuerySiteDB(q)
+	if err != nil {
+		return err
+	}
+	err = database.DB.
+		Unscoped().
+		Select(clause.Associations).
+		Delete(&site).Error
+	return err
 }
 
 /*

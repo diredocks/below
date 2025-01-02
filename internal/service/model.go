@@ -2,6 +2,7 @@ package service
 
 import (
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type CommentStatus string
@@ -15,14 +16,14 @@ type Site struct {
 	gorm.Model
 	Host    string `gorm:"type:text;not null;size=128;uniqueIndex" validate:"required,url,max=128" json:"site"`
 	SiteMap string `gorm:"type:text;not null;size=128" validate:"required,max=128" json:"site_map"`
-	Pages   []Page `gorm:"constraint:onDelete:CASCADE"`
+	Pages   []Page `gorm:"constraint:OnDelete:CASCADE"`
 }
 
 type Page struct {
 	gorm.Model
 	Path string `gorm:"type:text;not null;size=255;uniqueIndex:idx_site_path" validate:"required,uri,max=255" json:"path"`
 	// TODO: views of page
-	Comments []Comment `gorm:"constraint:onDelete:CASCADE"`
+	Comments []Comment `gorm:"constraint:OnDelete:CASCADE"`
 	SiteID   uint      `gorm:"uniqueIndex:idx_site_path" validate:"required,number" json:"site_id"`
 }
 
@@ -55,4 +56,20 @@ type ReqID struct {
 
 type ReqIDs struct {
 	IDs []uint `validate:"gt=0,dive,number,required" json:"ids"`
+}
+
+func (s *Site) BeforeDelete(tx *gorm.DB) (err error) {
+	var pages = []Page{}
+	if err := tx.
+		Where("site_id = ?", s.ID).
+		Find(&pages).Error; err != nil {
+		return err
+	}
+	if err := tx.
+		Unscoped().
+		Select(clause.Associations).
+		Delete(&pages).Error; err != nil {
+		return err
+	}
+	return nil
 }

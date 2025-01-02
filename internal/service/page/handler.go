@@ -39,7 +39,20 @@ func DelPage(c *fiber.Ctx) error {
 	})
 }
 
-// TODO: there should be a delete site
+func DelSite(c *fiber.Ctx) error {
+	q := c.Locals("validatedBody").(*service.ReqSite)
+	err := DelSiteDB(q)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).
+			JSON(fiber.Map{
+				"error": "failed to delete site",
+				"msg":   err.Error(),
+			})
+	}
+	return c.JSON(fiber.Map{
+		"success": "deleted site",
+	})
+}
 
 func AddOrUpdate(c *fiber.Ctx) error {
 	q := c.Locals("validatedBody").(*service.ReqSiteMap)
