@@ -12,6 +12,16 @@ func InitDB() error {
 		AutoMigrate(&service.Page{}, &service.Site{})
 }
 
+func GetAllSiteDB() ([]*service.Site, error) {
+	var sites []*service.Site
+	err := database.DB.
+		Find(&sites).Error
+	if err != nil {
+		return nil, err
+	}
+	return sites, nil
+}
+
 func QuerySiteDB(q *service.ReqSite) (*service.Site, error) {
 	var site service.Site
 	err := database.DB.

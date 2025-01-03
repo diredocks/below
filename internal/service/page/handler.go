@@ -37,6 +37,18 @@ func GetSite(c *fiber.Ctx) error {
 	return c.JSON(res)
 }
 
+func GetAllSite(c *fiber.Ctx) error {
+	sites, err := GetAllSiteDB()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).
+			JSON(fiber.Map{
+				"error": "failed to get all sites",
+				"msg":   err.Error(),
+			})
+	}
+	return c.JSON(sites)
+}
+
 func DelPage(c *fiber.Ctx) error {
 	q := c.Locals("validatedBody").(*service.ReqPage)
 	err := DelPageDB(q)
