@@ -16,6 +16,6 @@ func Router(app fiber.Router) {
 	site.Post("/", GetAllSite)
 	site.Post("/get", middleware.Validator(&service.ReqSite{}), GetSite)       // Get a site and all its pages
 	site.Post("/del", middleware.Validator(&service.ReqSite{}), DelSite)       // Delete whole site
-	page.Post("/add", middleware.Validator(&service.ReqSiteMap{}), AddSite)    // Add a new site
-	page.Post("/update", middleware.Validator(&service.ReqSite{}), UpdateSite) // Update site
+	site.Post("/add", middleware.Validator(&service.ReqSiteMap{}), AddSite)    // Add a new site
+	site.Post("/update", middleware.Validator(&service.ReqSite{}), UpdateSite) // Update site
 }
