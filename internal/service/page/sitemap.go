@@ -67,3 +67,26 @@ func FetchSitemap(sitemapURL string) ([]byte, error) {
 
 	return data, nil
 }
+
+func ProcessSitemap(sitemapURL string) (int64, error) {
+	// Fetch the sitemap
+	data, err := FetchSitemap(sitemapURL)
+	if err != nil {
+		return 0, fmt.Errorf("failed to fetch sitemap: %w", err)
+	}
+
+	// Parse the sitemap
+	site, pages, err := ParseSitemap(data)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse sitemap: %w", err)
+	}
+	site.SiteMap = sitemapURL // Fill Sitemap URL
+
+	// Insert parsed data into the database
+	affected, err := InsertPagesDB(site, pages)
+	if err != nil {
+		return 0, fmt.Errorf("failed to insert sitemap into database: %w", err)
+	}
+
+	return affected, nil
+}

@@ -81,30 +81,12 @@ func DelSite(c *fiber.Ctx) error {
 
 func AddSite(c *fiber.Ctx) error {
 	q := c.Locals("validatedBody").(*service.ReqSiteMap)
-	data, err := FetchSitemap(q.SiteMap)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).
-			JSON(fiber.Map{
-				"error": "failed to fetch sitemap",
-				"msg":   err.Error(),
-			})
-	}
 
-	site, pages, err := ParseSitemap(data)
+	affected, err := ProcessSitemap(q.SiteMap)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).
 			JSON(fiber.Map{
-				"error": "failed to parse sitemap",
-				"msg":   err.Error(),
-			})
-	}
-	site.SiteMap = q.SiteMap // Fill Sitemap URL
-
-	affected, err := InsertPagesDB(site, pages)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).
-			JSON(fiber.Map{
-				"error": "failed to insert sitemap into database",
+				"error": "failed to process sitemap",
 				"msg":   err.Error(),
 			})
 	}
@@ -126,30 +108,11 @@ func UpdateSite(c *fiber.Ctx) error {
 			})
 	}
 
-	data, err := FetchSitemap(q_sitemap.SiteMap)
+	affected, err := ProcessSitemap(q_sitemap.SiteMap)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).
 			JSON(fiber.Map{
-				"error": "failed to fetch sitemap",
-				"msg":   err.Error(),
-			})
-	}
-
-	site, pages, err := ParseSitemap(data)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).
-			JSON(fiber.Map{
-				"error": "failed to parse sitemap",
-				"msg":   err.Error(),
-			})
-	}
-	site.SiteMap = q_sitemap.SiteMap // Fill Sitemap URL
-
-	affected, err := InsertPagesDB(site, pages)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).
-			JSON(fiber.Map{
-				"error": "failed to insert sitemap into database",
+				"error": "failed to process sitemap",
 				"msg":   err.Error(),
 			})
 	}
