@@ -60,6 +60,10 @@ type ReqIDs struct {
 	IDs []uint `validate:"gt=0,dive,number,required" json:"ids"`
 }
 
+type ReqLogin struct {
+	Password string `validate:"required" json:"password"`
+}
+
 func (s *Site) BeforeDelete(tx *gorm.DB) (err error) {
 	var pages = []Page{}
 	if err := tx.

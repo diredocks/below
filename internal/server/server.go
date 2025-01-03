@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 
 	"below/internal/server/database"
+	"below/internal/service/auth"
 	"below/internal/service/comment"
 	"below/internal/service/page"
 )
@@ -38,5 +39,6 @@ func New(ctx context.Context) (*fiber.App, error) {
 	api_router := app.Group("/api")
 	page.Router(api_router)
 	comment.Router(api_router)
+	auth.Router(api_router)
 	return app, nil
 }
