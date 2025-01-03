@@ -92,7 +92,7 @@ func AddSite(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"success":  "updated sitemap",
+		"success":  "added a site",
 		"affected": affected,
 	})
 }
@@ -118,7 +118,7 @@ func UpdateSite(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"success":  "updated sitemap",
+		"success":  "updated site",
 		"affected": affected,
 	})
 }
