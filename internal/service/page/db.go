@@ -12,44 +12,13 @@ func InitDB() error {
 		AutoMigrate(&service.Page{}, &service.Site{})
 }
 
-func InsertPagesDB(s *service.Site, p []service.Page) (int64, error) {
-	res := database.DB.
-		Clauses(clause.OnConflict{DoNothing: true}).
-		Create(s)
-	if res.Error != nil {
-		return 0, res.Error
-	}
-
-	var siteID uint
-	if res.RowsAffected == 0 {
-		// if exist then find site_id via Host
-		var site service.Site
-		database.DB.
-			Where(s, "Host").
-			Find(&site)
-		siteID = site.ID
-	} else {
-		// if not then use the id we just added
-		siteID = s.ID
-	}
-
-	for i := range p {
-		p[i].SiteID = siteID
-	}
-
-	res = database.DB.
-		Clauses(clause.OnConflict{DoNothing: true}).
-		Create(&p)
-
-	return res.RowsAffected, res.Error
-}
-
-func QuerySiteDB(q *service.ReqSite) (service.Site, error) {
+func QuerySiteDB(q *service.ReqSite) (*service.Site, error) {
 	var site service.Site
 	err := database.DB.
+		Preload("Pages").
 		Where("host = ?", q.Site).
 		First(&site).Error
-	return site, err
+	return &site, err
 }
 
 func QueryPageDB(q *service.ReqPage) (*service.Page, error) {
@@ -85,6 +54,39 @@ func DelSiteDB(q *service.ReqSite) error {
 	err = database.DB.
 		Unscoped().
 		Select(clause.Associations).
-		Delete(&site).Error
+		Delete(site).Error
 	return err
+}
+
+func InsertPagesDB(s *service.Site, p []service.Page) (int64, error) {
+	res := database.DB.
+		Clauses(clause.OnConflict{DoNothing: true}).
+		Create(s)
+	if res.Error != nil {
+		return 0, res.Error
+	}
+
+	// Get SiteID for pages we gonna add
+	var siteID uint
+	if res.RowsAffected == 0 {
+		// if exist then find site_id via Host
+		var site service.Site
+		database.DB.
+			Where(s, "Host").
+			First(&site)
+		siteID = site.ID
+	} else {
+		// if not then use the id we just added
+		siteID = s.ID
+	}
+
+	for i := range p {
+		p[i].SiteID = siteID
+	}
+
+	res = database.DB.
+		Clauses(clause.OnConflict{DoNothing: true}).
+		Create(&p)
+
+	return res.RowsAffected, res.Error
 }

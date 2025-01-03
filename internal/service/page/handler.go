@@ -24,6 +24,19 @@ func GetPage(c *fiber.Ctx) error {
 	return c.JSON(res)
 }
 
+func GetSite(c *fiber.Ctx) error {
+	q := c.Locals("validatedBody").(*service.ReqSite)
+	res, err := QuerySiteDB(q)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).
+			JSON(fiber.Map{
+				"error": "failed to get site",
+				"msg":   err.Error(),
+			})
+	}
+	return c.JSON(res)
+}
+
 func DelPage(c *fiber.Ctx) error {
 	q := c.Locals("validatedBody").(*service.ReqPage)
 	err := DelPageDB(q)

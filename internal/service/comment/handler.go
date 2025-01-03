@@ -13,6 +13,7 @@ func Index(c *fiber.Ctx) error {
 
 func Add(c *fiber.Ctx) error {
 	com := c.Locals("validatedBody").(*service.Comment)
+	com.Status = service.StatusPending // Defalut to Pending
 
 	if err := InsertDB(com); err != nil {
 		return c.Status(fiber.StatusInternalServerError).

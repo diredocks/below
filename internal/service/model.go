@@ -8,8 +8,9 @@ import (
 type CommentStatus string
 
 const (
-	StatusSent    CommentStatus = "Sent"
-	StatusPending CommentStatus = "Pending"
+	StatusApproved CommentStatus = "Approved"
+	StatusPending  CommentStatus = "Pending"
+	StatusHided    CommentStatus = "Hided"
 )
 
 type Site struct {
@@ -33,7 +34,7 @@ type Comment struct {
 	Content string `gorm:"type:text;not null;size=1024" validate:"required,max=1024" json:"content"`
 	Email   string `gorm:"type:text;not null;size=64" validate:"omitempty,email,max=64" json:"email"`
 	// TODO: upvote and downvote of comment
-	Status CommentStatus `gorm:"type:text;not null;default:'Sent'"`
+	Status CommentStatus `gorm:"type:text;not null;default:'Pending'"`
 	PageID uint          `validate:"required,number" json:"page_id"`
 }
 
