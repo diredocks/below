@@ -4,3 +4,9 @@
 *.db
 backend/*.db
 backend/.env
+# frontend related
+node_modules
+.npm
+.node_repl_history
+.vscode
+/dist
