@@ -5,8 +5,10 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 
+	"below/internal/config"
 	"below/internal/server/database"
 	"below/internal/service/auth"
 	"below/internal/service/comment"
@@ -33,6 +35,9 @@ func New(ctx context.Context) (*fiber.App, error) {
 	app.Use(logger.New(logger.Config{
 		TimeFormat: time.RFC3339,
 		Format:     "[${time}] ${ip}:${port} ${status} - ${method} ${path}\n",
+	}))
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: config.Config("CROS_ALLOW_ORIGINS"),
 	}))
 
 	// Config route
