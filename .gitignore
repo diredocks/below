@@ -2,7 +2,5 @@
 # below backend related
 .env
 *.db
-below
-backend/below
 backend/*.db
 backend/.env
