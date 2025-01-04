@@ -16,8 +16,10 @@
       });
     in
     {
-      overlays.default = final: prev: {
+      overlays.default = final: prev: rec {
         go = final."go_1_${toString goVersion}";
+        nodejs = prev.nodejs;
+        yarn = (prev.yarn.override { inherit nodejs; });
       };
 
       devShells = forEachSupportedSystem ({ pkgs }: {
@@ -25,18 +27,22 @@
           packages = with pkgs; [
             # go (version is specified by overlay)
             go
-
             # goimports, godoc, etc.
             gotools
-
             # https://github.com/golangci/golangci-lint
             golangci-lint
-
             # Language Server
             gopls
 
             sqlite
             upx
+
+            # Front end related
+            node2nix
+            nodejs
+            nodePackages.pnpm
+            yarn
+            vtsls
           ];
           shellHook = ''
             export SHELL=$(which zsh)
