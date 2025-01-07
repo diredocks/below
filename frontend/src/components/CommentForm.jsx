@@ -1,4 +1,5 @@
 import { createSignal } from "solid-js";
+import { formatDateTimeFrom } from "./DateAndTime";
 
 const CommentForm = ({ onSubmit }) => {
   const [name, setName] = createSignal("");
@@ -7,7 +8,12 @@ const CommentForm = ({ onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ name: name(), content: content(), email: email() });
+    onSubmit({
+      name: name(),
+      content: content(),
+      email: email(),
+      CreatedAt: formatDateTimeFrom(),
+    });
     // Clean Previous Content
     setContent("");
   };
@@ -25,11 +31,10 @@ const CommentForm = ({ onSubmit }) => {
         />
         <input
           type="email"
-          placeholder="电子邮件"
+          placeholder="电子邮件（可选）"
           value={email()}
           onInput={(e) => setEmail(e.target.value)}
           class="input input-bordered w-full focus:invalid:border-pink-500 focus:invalid:text-pink-600"
-          required
         />
       </div>
       <div class="mb-2">
