@@ -24,18 +24,18 @@ const CommentForm = ({ onSubmit }) => {
           required
         />
         <input
-          type="text"
-          placeholder="Email"
+          type="email"
+          placeholder="电子邮件"
           value={email()}
           onInput={(e) => setEmail(e.target.value)}
-          class="input input-bordered w-full"
+          class="input input-bordered w-full focus:invalid:border-pink-500 focus:invalid:text-pink-600"
           required
         />
       </div>
       <div class="mb-2">
         <div className="label">
           <span className="label-text">内容</span>
-          <span className="label-text-alt text-slate-500">悄悄告诉你：什么都不想说也没关系的</span>
+          <span className="label-text-alt text-gray-500">悄悄告诉你：什么都不想说也没关系的</span>
         </div>
         <textarea
           placeholder="想说点什么？"
