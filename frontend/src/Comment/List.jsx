@@ -1,29 +1,11 @@
 import "./style/List.css";
-import { createSignal } from "solid-js";
 import { Index } from "solid-js/web";
 
-const initialComments = [
-  {
-    id: 1,
-    author: "Jane Doe",
-    content: "This is a great post!",
-    date: "2025-01-29",
-  },
-  {
-    id: 2,
-    author: "John Smith",
-    content: "I completely agree!",
-    date: "2025-01-29",
-  },
-];
-
-export default function CommentList() {
-  const [comments, setComments] = createSignal(initialComments);
-
+export default function CommentList(props) {
   return (
     <section class="comment-list">
       <ul>
-        <Index each={comments()}>{(comment) => <CommentItem comment={comment()} />}</Index>
+        <Index each={props.comments}>{(comment) => <CommentItem comment={comment()} />}</Index>
       </ul>
     </section>
   );
