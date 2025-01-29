@@ -1,7 +1,7 @@
 {
-  "name": "vite-template-solid",
-  "version": "0.0.0",
-  "description": "",
+  "name": "below-frontend",
+  "version": "0.0.1",
+  "description": "comment engine that just works",
   "type": "module",
   "scripts": {
     "start": "vite",

@@ -1,10 +1,9 @@
 /* @refresh reload */
 import { render } from 'solid-js/web';
 
-import './index.css';
-import App from './App';
+import Comment from './Comment/Comment.jsx';
 
-const root = document.getElementById('root');
+const root = document.getElementById('below-comment');
 
 if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   throw new Error(
@@ -12,4 +11,4 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   );
 }
 
-render(() => <App />, root);
+render(() => <Comment />, root);
