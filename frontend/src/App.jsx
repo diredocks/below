@@ -1,13 +1,24 @@
-import CommentBox from "./components/CommentBox";
-import CtaSection from "./components/CtaSection";
+import logo from './logo.svg';
+import styles from './App.module.css';
 
 function App() {
   return (
-    <div class="flex flex-col items-center justify-center h-full min-h-screen bg-base-200">
-      {/*<div class="cta-section p-20 m-20 pb-10 mb-10 text-balance"><CtaSection /></div>/}
-      {/* container of comment box as demo page */}
-      <div class="comment-box max-w-3xl bg-base-100 rounded-md border shadow-md p-10 m-10"><CommentBox /></div>
-    </div >
+    <div class={styles.App}>
+      <header class={styles.header}>
+        <img src={logo} class={styles.logo} alt="logo" />
+        <p>
+          Edit <code>src/App.jsx</code> and save to reload.
+        </p>
+        <a
+          class={styles.link}
+          href="https://github.com/solidjs/solid"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn Solid
+        </a>
+      </header>
+    </div>
   );
 }
 
